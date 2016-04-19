@@ -1,0 +1,197 @@
+<?php 
+	//Start OutputBuffering: 
+	ob_start();
+
+	//Start a session:
+	session_start();
+
+	//If a page title does not exist:
+	if (!isset($page_title))
+		$page_title = "Welkom bij deBookStore!";
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title><?php echo $page_title; ?></title>
+	<style type="text/css" media="screen">@import "includes/style.css";</style>
+	<link rel="shortcut icon" href="images/logos.png">
+
+	<!--Here the javascript for the functionality of the banner:-->
+	<script type="text/javascript">
+ 	var nrImg = 3; //Number of images 
+    var IntSeconds = 4; //the seconds between the imgs
+
+        function Load()
+        {
+            nrShown = 0; //the img visible
+            Vect = new Array(nrImg + 10);
+            Vect[0] = document.getElementById("Img1");
+            Vect[0].style.visibility = "visible";
+
+            document.getElementById("S" + 0).style.visibility = "visible";
+
+            for (var i = 1; i < nrImg; i++)
+            {
+                Vect[i] = document.getElementById("Img" + (i + 1));
+                document.getElementById("S" + i).style.visibility = "visible";
+            }
+
+            document.getElementById("S" + 0).style.backgroundColor = "rgba(255, 255, 255, 0.90)";
+            document.getElementById("SP" + nrShown).style.visibility = "visible";
+
+            mytime = setInterval(Timer, IntSeconds * 1000);
+        }
+        function Timer()
+        {
+            nrShown++;
+            if (nrShown == nrImg)
+                nrShown = 0;
+            Effect();
+        }
+        //next img
+        function next()
+        {
+            nrShown++;
+            if (nrShown == nrImg)
+                nrShown = 0;
+            Effect();
+
+            clearInterval(mytime);
+            mytime = setInterval(Timer, IntSeconds * 1000);
+        }
+        function prev()
+        {
+            nrShown--;
+            if (nrShown == -1)
+                nrShown = nrImg -1;
+            Effect();
+
+            clearInterval(mytime);
+            mytime = setInterval(Timer, IntSeconds * 1000);
+        }
+        //here changes the img + effect
+        function Effect()
+        {
+            for (var i = 0; i < nrImg; i++)
+            {
+                Vect[i].style.opacity = "0";   //to add the fade effect
+                Vect[i].style.visibility = "hidden";
+
+                document.getElementById("S" + i).style.backgroundColor = "rgba(0, 0, 0, 0.70)";
+                document.getElementById("SP" + i).style.visibility = "hidden";
+            }
+            Vect[nrShown].style.opacity = "1";
+            Vect[nrShown].style.visibility = "visible";
+            document.getElementById("S" + nrShown).style.backgroundColor = "rgba(255, 255, 255, 0.90)";
+            document.getElementById("SP" + nrShown).style.visibility = "visible";
+        }
+    </script>
+</head>
+<body onload="Load()">
+	<div id="header">
+		<div class="wrapper">
+			<div class="headercontent">
+				<div class="logo"><a href="index.php"><img src="images/logo.png" width="400px;"/></a></div>
+						<div class="social">
+							<a href="http://www.facebook.com" target="blank">	
+								<img src="images/Facebook.png"alt="Facebook" title="debookstore op Facebook" class="trans"/></a>
+
+						<a href="http://www.twitter.com" target="blank">
+							<img src="images/Twitter.png" alt="Twitter" title="debookstore op Twitter" class="trans"/></a>
+
+						<a href="http://www.linkedin.com" target="blank">
+							<img src="images/Linked-in.png"alt="Linkedin" title="debookstore op Linkedin" class="trans"/></a>
+
+						<a href="http://www.youtube.com" target="blank">
+							<img src="images/YouTube.png" alt="Youtube" title="debookstore op Youtube" class="trans"/></a>
+						</div>
+
+            <?php
+                // Toon de inhoud van je winkelwagen en de naam van de gebruiker linksboven in header.
+                echo "<ul id='headermenu'>\n";
+
+                if (!isset($_SESSION['Klant_ID'])) {
+                    echo "<li>U bent niet ingelogd | <a href=\"login.php\">Login</a> of <a href=\"register.php\">Registreer</a></li>\n";
+                } else{
+                    echo "<li>Welkom, <a href=\"account.php\">" .$_SESSION['Voornaam']." ".$_SESSION['Achternaam'] ."</a> | <a href=\"logout.php\">Logout</a></li>\n";
+                }
+                
+                if (empty($_SESSION['cart'])) {
+                    echo "<li>Winkelwagen is leeg</li>\n";
+                } else {
+                    $cart2 = explode("|",$_SESSION['cart']);
+
+                    // Tellen inhoud winkelwagen
+                    $count = count($cart2);
+                    if ($count == 1) {
+                        echo "<li>1 product ";
+                    } else {
+                        echo "<li>".$count." producten ";
+                    }
+                    echo "in <a href=\"cart.php\">winkelwagen</a> | <a href=\"checkout.php\">afrekenen</a></li>\n";
+                }
+                echo("</ul>");
+            ?>
+            </div>
+	   </div>
+    </div>
+
+	<div class="wrapper">
+		<div class="menu">
+			<?php if (!isset($active)) $active = 0; ?>
+				<ul>
+					<li<?php if ($active =="1") {?> class="active"<?php } ?>><a href="index.php" title="HomePage">Homepage</a></li>
+					<!--<li<?php if ($active =="2") {?> class="active"<?php } ?>><a href="algemeen.php" title="algemeen">Algemeen</a></li>-->
+					<li<?php if ($active =="3") {?> class="active"<?php } ?>><a href="ebooks.php" title="E-books kopen">E-books kopen</a></li>
+					<!--<li<?php if ($active =="4") {?> class="active"<?php } ?>><a href="uitgevers.php" title="Uitgevers">Uitgevers</a></li>-->
+					<li<?php if ($active =="5") {?> class="active"<?php } ?>><a href="bestellingexpire.php" title="Mijn Bestellingen">Mijn Bestellingen</a></li>
+					<li<?php if ($active =="6") {?> class="active"<?php } ?>><a href="contact.php" title="Contact">Contact</a></li>
+                </ul>
+		</div>
+                <div class="zoek">    
+                    <form method="post" action="search.php?go" id="searchform"> 
+	                   <input  type="text" name="name" id="test" placeholder="typ hier uw zoekopdracht" autofocus required > 
+	                   <input type="image" name="submit" value="submit" src="images/search.jpg" width="40px" height="40px" />
+	                </form>
+                </div>
+	</div>
+
+	<div id="slider">
+        <div id="imgs">
+            <!-- These are the images to be shown: -->
+            <img id="Img3" src="images/3.jpg"/>
+            <img id="Img2" src="images/2.jpg"/>
+            <img id="Img1" src="images/1.jpg"/>
+        </div>
+        
+        <div id="Snav">
+            <!-- These show the current image: -->
+            <div id="SnavUp">
+                <div id="Scircles">
+                    <ul>
+                        <li id="S0"></li>
+                        <li id="S1"></li>
+                        <li id="S2"></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- These are the left and right button :-->
+            <div id="SnavMiddle">
+                <img id="Sleft" src="images/left.png" onclick="prev()"/>
+                <img id="Sright" src="images/right.png" onclick="next()"/>
+            </div>
+           
+            <div id="SnavBottom">
+                <!-- here you have to add the p tag-->
+                <p id="SP0"></p>
+                <p id="SP1"></p>
+                <p id="SP2"></p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="wrapper">
+         <div class="content">
